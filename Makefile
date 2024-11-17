@@ -32,7 +32,7 @@ tag: pack
 	# git config --get user.name | cut -d " " -f 1
 	# and version with
 	# cargo pkgid | grep -oP '#\K[^#]+$'
-	docker tag $(crate):local alekspickle/$(crate):v0.1.0
+	docker tag $(crate):local olekspickle/$(crate):v0.1.0
 
 log_level=RUST_LOG=info,actix_template=trace
 

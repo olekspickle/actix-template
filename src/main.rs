@@ -1,4 +1,4 @@
-//! ![actix-template](https://github.com/alekspickle/actix-template.git)
+//! ![actix-template](https://github.com/olekspickle/actix-template.git)
 //!
 //! ## Overview
 //! Template to have something to get-go in some situations
