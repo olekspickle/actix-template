@@ -1,0 +1,56 @@
+[package]
+version = "0.1.0"
+name = "actix-template"
+authors = ["Oleks Pickle <olekspickle@users.noreply.github.com>"]
+license = "MIT OR Apache-2.0"
+edition = "2021"
+repository = "https://github.com/alekspickle/actix-template"
+description = """
+Actix template with askama templates and a bit of htmx magic and simple SQL setup
+"""
+
+[dependencies]
+actix-files = "0.6.6"
+actix-web = "4.9.0"
+anyhow = "1"
+askama = "0.12"
+env_logger = "0.11.5"
+deadpool = "0.12.1"
+deadpool-sqlite = "0.9.0"
+log = "0.4.22"
+rusqlite = { version = "0.32.1", features = ["bundled"] }
+rustls = "0.23.15"
+rustls-pemfile = "2.2.0"
+serde = {version = "1.0.210", features = ["derive"]}
+serde_json = "1.0.132"
+serde_rusqlite = "0.36.0"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+# Optimizations
+
+# Optimized to compile times
+# [profile.dev]
+# debug = 0
+# [profile.release]
+# debug = 0
+
+# Optimized to minimum size bin target
+# https://doc.rust-lang.org/cargo/reference/profiles.html
+# if you want more optimization there is only no_std, no_main path and other hacks
+# [profile.release]
+# opt-level = "z"     # Optimize for size.
+# lto = true          # Enable Link Time Optimization
+# panic = "abort"     # Abort on panic
+# strip = "symbols"   # (or true) Automatically strip symbols from the binary ().
+# codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+
+# Optimized to runtime performance
+# [profile.release]
+# lto = true
+# codegen-units = 1
+# panic = "abort"
+
+# statically link C runtime on *-musl targets
+# https://github.com/rust-lang/rust/issues/59302
+# [target.x86_64-unknown-linux-musl]
+# rustflags = "-Ctarget-feature=-crt-static"
