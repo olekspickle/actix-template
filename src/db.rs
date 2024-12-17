@@ -1,5 +1,6 @@
 use std::sync::LazyLock;
 
+use actix_web::web::trace;
 use anyhow::Result;
 use deadpool_sqlite::{Config, Pool, Runtime};
 use serde::{Deserialize, Serialize};
@@ -108,6 +109,7 @@ pub(crate) async fn update_post(id: u32, post: NewPost) -> anyhow::Result<()> {
         let mut stmt = conn
             .prepare_cached("UPDATE posts SET user=(?2), content=(?3) WHERE id=(?1)")
             .expect("failed to cache statement");
+        log::debug!("UPDATE STMT: {:?}", *stmt);
         let _ = stmt
             .execute([id.to_string(), post.user, post.content])
             .expect("failed to add post");

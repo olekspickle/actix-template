@@ -1,4 +1,4 @@
-//! ![actix-template](https://private-user-images.githubusercontent.com/22867443/396483916-217f34ce-801a-4010-aa91-502e83e05ee0.gif?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzQ0MzYyMjgsIm5iZiI6MTczNDQzNTkyOCwicGF0aCI6Ii8yMjg2NzQ0My8zOTY0ODM5MTYtMjE3ZjM0Y2UtODAxYS00MDEwLWFhOTEtNTAyZTgzZTA1ZWUwLmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDEyMTclMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQxMjE3VDExNDUyOFomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTlmY2JlYjhlMDk1NmI2Nzk0NjE2OGJkZDFlNTk5MTJjOGQ4MjU0N2EwMmFjYjA2ZDhhYjFhNGVkMTA5YzZmMTMmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.NfskIhGq2HuaHG14KXovGPZibypFLAUx-gZfPXY5eZM)
+//! ![actix-template](https://github.com/user-attachments/assets/91d5c75d-e809-4b22-98c3-d9afff07164d)
 //!
 //! ## Overview
 //! Template to have something to get-go in some situations
@@ -26,7 +26,11 @@
 //!
 
 use actix_files::Files;
-use actix_web::{middleware, web, App, HttpServer};
+use actix_web::{
+    middleware,
+    web::{get, post, resource, to, JsonConfig},
+    App, HttpServer,
+};
 
 mod db;
 mod handlers;
@@ -34,14 +38,14 @@ mod mw;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    env_logger::init_from_env(env_logger::Env::default().default_filter_or("info"));
+    env_logger::init_from_env(env_logger::Env::default().default_filter_or("trace"));
 
     db::init().await?;
 
     let addr = ("0.0.0.0", 7777);
     HttpServer::new(move || {
         // Set a payload limit
-        let json_cfg = web::JsonConfig::default().limit(4096);
+        let json_cfg = JsonConfig::default().limit(4096);
         App::new()
             .app_data(json_cfg)
             .wrap(middleware::Logger::default())
@@ -51,17 +55,13 @@ async fn main() -> anyhow::Result<()> {
                     .show_files_listing()
                     .index_file("custom.css"),
             )
-            .service(web::resource("/").route(web::get().to(handlers::home)))
-            .service(web::resource("/posts").route(web::get().to(handlers::posts)))
-            .service(web::resource("/hello").route(web::get().to(handlers::hello)))
-            .service(web::resource("/add-post").route(web::post().to(handlers::add_post)))
-            .service(
-                web::resource("/update-post/{id}").route(web::patch().to(handlers::update_post)),
-            )
-            .service(
-                web::resource("/delete-post/{id}").route(web::delete().to(handlers::delete_post)),
-            )
-            .default_service(web::to(handlers::not_found))
+            .service(resource("/").route(get().to(handlers::home)))
+            .service(resource("/posts").route(get().to(handlers::posts)))
+            .service(resource("/hello").route(get().to(handlers::hello)))
+            .service(resource("/add-post").route(post().to(handlers::add_post)))
+            .service(resource("/update-post/{id}").route(post().to(handlers::update_post)))
+            .service(resource("/delete-post/{id}").route(post().to(handlers::delete_post)))
+            .default_service(to(handlers::not_found))
     })
     .bind(addr)?
     .run()

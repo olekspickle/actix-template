@@ -1,4 +1,4 @@
-{% extends "main.html" %}
+{% extends "home.html" %}
 
     {% block content %}
 <!-- Main Content -->
@@ -8,9 +8,13 @@
         <form id="post-form" action="/add-post" method="post" class="mb-6 text-black">
             <input name="user" class="h-8 px-2 border border-gray-300 rounded-lg mb-2" placeholder="write as..." />
             <textarea
+                autofocus
                 name="content"
-                class="w-full p-2 border border-gray-300 rounded-lg mb-2"
-                placeholder="content goes here..."
+                form="post-form"
+                spellcheck="true"
+                placeholder="what's on your mind?"
+                onkeydown="handleCtrlEnterSubmit(event)"
+                class="w-full p-2 border border-gray-300 rounded-lg mb-2 text-gray"
             ></textarea>
 
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">post</button>
@@ -21,11 +25,12 @@
             {% for post in posts %}
             <!-- Single post as list item -->
             <li id="post-{{ post.id }}" class="bg-white p-4 border border-gray-200 rounded-lg list-none">
-                <form id="update" action="/update-post/{{ post.id }}" method="patch" class="mb-2 text-black">
+                <form id="update" action="/update-post/{{ post.id }}" method="post" >
                     <p name="user">{{ post.user }}</p>
                     <p
-                        contenteditable="true"
                         name="content"
+                        spellcheck="true"
+                        contenteditable="true"
                         class="w-full rounded-lg mb-2"
                         placeholder="content goes here...">
                         {{ post.content }}
@@ -33,6 +38,7 @@
                     <div class="flex">
                         <div class="px-2">
                             <button
+                                form="update"
                                 type="submit"
                                 class="bg-blue-500 px-2 text-white rounded">
                                 update
@@ -40,13 +46,15 @@
                         </div>
                         <div class="px-2">
                             <button
-                                hx-delete="/delete-post/{{ post.id }}"
+                                form="delete"
+                                type="submit"
                                 class="bg-red-500 px-2 text-white rounded">
                                 delete
                             </button>
                         </div>
                     </div>
                 </form>
+                <form id="delete" action="/delete-post/{{ post.id }}" method="post" />
             </li>
             {% endfor %}
         </ul>
@@ -54,23 +62,47 @@
 </div>
 
 <script>
-import { connect } from "https://deno.land/x/nats@v1.16.0/src/mod.ts";
+var textArea = document.querySelector('textarea');
 
-const servers = Deno.env.get("NATS_URL") || "nats://localhost:4222";
-const nc = await connect({
-    servers: servers.split(","),
-});
-
-const sub_cfg = {callback: |(err, msg)| => {
-    if (err) {
-      console.log(err.message);
-    } else {
-      console.log(msg.data.string());
-}
-  },
-max: 5,
+textArea.onfocus = function () {
+    'use strict';
+    if (textArea.getAttribute('placeholder') === "what's on your mind?") {
+        textArea.setAttribute('placeholder', '');
+    }
 };
-let sub = nc.subscribe("posts*", sub_cfg);
+
+textArea.onblur = function () {
+    'use strict';
+    if (textArea.getAttribute('placeholder') === '') {
+        textArea.setAttribute('placeholder', "what's on your mind?");
+    }
+};
+
+function handleCtrlEnterSubmit(event) {
+    if (event.ctrlKey && event.key === 'Enter') {
+        event.target.form.submit();
+    }
+}
+
+// TODO: find excuse to integrate nats
+//// just a simple script for nats fetch
+//import { connect } from "https://deno.land/x/nats@v1.16.0/src/mod.ts";
+//
+//const servers = Deno.env.get("NATS_URL") || "nats://localhost:4222";
+//const nc = await connect({
+//servers: servers.split(","),
+//});
+//
+//const sub_cfg = {callback: |(err, msg)| => {
+//    if (err) {
+//      console.log(err.message);
+//    } else {
+//      console.log(msg.data.string());
+//}
+//  },
+//max: 5,
+//};
+//let sub = nc.subscribe("posts*", sub_cfg);
 
 </script>
 {% endblock content %}

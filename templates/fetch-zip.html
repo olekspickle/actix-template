@@ -1,0 +1,8 @@
+{% extends "home.html" %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    {% if title == "Fetch" %}
+    <a class="btn" href="/fetch-zip">Get zip</a>
+    {% endif %}
+{% endblock content %}

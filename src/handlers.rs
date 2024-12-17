@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use actix_web::{
     web::{self, Form, Html, Redirect},
-    Responder, Result,
+    HttpResponse, Responder, Result,
 };
 use askama::Template;
 
@@ -52,7 +52,9 @@ pub async fn add_post(query: Form<db::NewPost>) -> Result<impl Responder> {
         .await
         .expect("failed to add post");
 
-    Ok(Redirect::to("/posts").see_other())
+    Ok(HttpResponse::SeeOther()
+        .append_header(("Location", "/posts"))
+        .finish())
 }
 
 #[derive(serde::Deserialize)]
@@ -66,7 +68,9 @@ pub async fn update_post(query: Form<db::NewPost>, path: web::Path<Id>) -> Resul
         .await
         .expect("failed to add post");
 
-    Ok(Redirect::to("/posts").see_other())
+    Ok(HttpResponse::SeeOther()
+        .append_header(("Location", "/posts"))
+        .finish())
 }
 
 pub async fn delete_post(query: web::Path<u32>) -> Result<impl Responder> {
@@ -74,7 +78,9 @@ pub async fn delete_post(query: web::Path<u32>) -> Result<impl Responder> {
         .await
         .expect("failed to add post");
 
-    Ok(Redirect::to("/posts").see_other())
+    Ok(HttpResponse::SeeOther()
+        .append_header(("Location", "/posts"))
+        .finish())
 }
 
 pub async fn not_found(path: web::Path<String>) -> Result<impl Responder> {
@@ -93,7 +99,7 @@ pub mod templates {
     use super::*;
 
     #[derive(Template)]
-    #[template(path = "main.html")]
+    #[template(path = "home.html")]
     pub struct Home {
         pub title: String,
     }
