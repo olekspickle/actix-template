@@ -1,6 +1,6 @@
 # actix-template
 
-![actix-template](https://github.com/user-attachments/assets/91d5c75d-e809-4b22-98c3-d9afff07164d)
+![actix-template](https://github.com/user-attachments/assets/2a7ea246-d0a6-48d9-9954-11536fb4484a)
 
 ### Overview
 Template to have something to get-go in some situations
