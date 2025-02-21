@@ -3,7 +3,7 @@ version = "0.1.0"
 name = "actix-template"
 authors = ["Oleks Pickle <22867443+olekspickle@users.noreply.github.com>"]
 license = "MIT OR Apache-2.0"
-edition = "2021"
+edition = "2024"
 repository = "https://github.com/olekspickle/actix-template"
 description = """
 Actix template with askama templates and a bit of htmx magic and simple SQL setup
